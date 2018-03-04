@@ -1,6 +1,7 @@
 package com.mustafa.arif.fbapp.ui
 
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.RecyclerView.OnScrollListener
 import com.mustafa.arif.fbapp.backend.CommunicationChecker
 import com.mustafa.arif.fbapp.backend.FbCommunicator
 import com.mustafa.arif.fbapp.backend.model.Data
@@ -17,6 +18,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.ArrayList
 import javax.inject.Inject
+import android.support.v7.widget.RecyclerView
+import android.view.View
+
 
 /**
  * Created by arifm2 on 3/2/2018.
@@ -40,8 +44,17 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
 
     private val recyclerViewListener = object : RecyclerViewListener {
 
-        override fun onClick(v: android.view.View, position: Int) {
 
+        override fun onClick(v: android.view.View, position: Int) {
+            if (v.id == R.id.imageView) {
+                val thumbnail = data?.get(position)?.getFullPicture()
+                if (thumbnail != null && !thumbnail.isEmpty() && isValid(thumbnail))
+                    view?.openBrowser(thumbnail);
+            } else {
+                val urlLink = data?.get(position)?.getPermalinkUrl()
+                if (urlLink != null && !urlLink.isEmpty() && isValid(urlLink))
+                    view?.openBrowser(urlLink);
+            }
         }
 
         override fun atBottom() {
@@ -50,13 +63,42 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
         }
     }
 
+
+    val scrollListener = object : OnScrollListener() {
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            when (newState) {
+                RecyclerView.SCROLL_STATE_IDLE -> view?.showFloatingUpdateBtn(true)
+                RecyclerView.SCROLL_STATE_DRAGGING -> view?.showFloatingUpdateBtn(false)
+            }
+
+        }
+    }
+
     val onRefreshListener = SwipeRefreshLayout.OnRefreshListener {
         view?.fbLogin()
+    }
+
+    fun onRestore(data: ArrayList<Data>,paging: Paging){
+        this.data=data
+        this.paging=paging
+    }
+
+    fun getData(): ArrayList<Data>?{
+        return this.data
+    }
+
+    fun getPaging(): Paging?{
+        return this.paging
     }
 
     fun updateRecycler(token: String?) {
         if (token == null) {
             view?.fbLogin()
+            return
+        }else if(data!=null){
+            recyclerAdapter.addViewListener(recyclerViewListener)
+            view?.setRecycleAdapter(recyclerAdapter, data)
             return
         }
         getInitFeed(token)
@@ -70,13 +112,15 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
         }
         recyclerAdapter.addViewListener(recyclerViewListener)
         if (communicationChecker!!.isNetworkAvailable!!) {
-            fbCommunicator?.getFeed(10, token, "picture,created_time,story,message,name")?.enqueue(object : Callback<FbResponse> {
+            fbCommunicator?.getFeed(10, token, "picture,created_time,story" +
+                    ",message,name,full_picture,permalink_url")?.enqueue(object : Callback<FbResponse> {
                 override fun onResponse(call: Call<FbResponse>, response: retrofit2.Response<FbResponse>?) {
-                    if (response != null) {
+                    if (response != null && response.body()?.data != null) {
                         data = response.body()?.data
                         paging = response.body()?.paging
-                        view!!.setRecycleAdapter(recyclerAdapter, data)
+                        view?.setRecycleAdapter(recyclerAdapter, data)
                         view?.showProgressBar(false)
+                        view?.showFloatingUpdateBtn(true)
                     }
                 }
 
@@ -93,14 +137,13 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
 
     fun getOlderFeed() {
         view?.showProgressBar(true)
-        recyclerAdapter.addViewListener(recyclerViewListener)
         if (communicationChecker!!.isNetworkAvailable!!) {
             fbCommunicator?.getOlderFeed(paging?.getNext())?.enqueue(object : Callback<FbResponse> {
                 override fun onResponse(call: Call<FbResponse>, response: retrofit2.Response<FbResponse>?) {
-                    if (response != null) {
+                    if (response != null && response.body()?.data != null) {
                         data?.addAll(response.body()?.data!!)
                         paging = response.body()?.paging
-                        view!!.updateRecyclerAdapter(recyclerAdapter, data)
+                        view?.updateRecyclerAdapter(recyclerAdapter, data)
                         view?.showProgressBar(false)
                     }
                 }
@@ -156,7 +199,7 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
             val tempData = Data()
             tempData.setMessage("-1")
             data!!.add(tempData)
-            view!!.setRecycleAdapter(recyclerAdapter, data)
+            view?.setRecycleAdapter(recyclerAdapter, data)
         }
 
     }
@@ -194,5 +237,7 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
         fun showProgressBar(show: Boolean)
 
         fun fbLogin()
+
+        fun showFloatingUpdateBtn(boolean: Boolean)
     }
 }

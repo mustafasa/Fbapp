@@ -22,6 +22,8 @@ import com.mustafa.arif.fbapp.MyApp
 import com.mustafa.arif.fbapp.R
 import com.mustafa.arif.fbapp.base.BaseActivity
 import java.util.*
+import android.view.Gravity
+import android.view.WindowManager
 
 
 class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePresenter.View {
@@ -30,6 +32,9 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
     private var recyclerView: RecyclerView? = null
     private var progressBar: ProgressBar? = null
     private var swipeRefreshLayout: SwipeRefreshLayout? = null
+    private var floatingPostBtn: FloatingActionButton? = null
+    private val KEY_DATA: String = "DATA"
+    private val KEY_PAGING: String = "PAGING"
 
     override fun setRecycleAdapter(recyclerAdapter: RecyclerAdapter, data: ArrayList<Data>?) {
         recyclerAdapter.addFbFeeds(data)
@@ -43,6 +48,12 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
         recycleAdapter.notifyDataSetChanged()
     }
 
+    override fun showFloatingUpdateBtn(boolean: Boolean) {
+        if (boolean) floatingPostBtn?.show()
+        else floatingPostBtn?.hide()
+    }
+
+
     private fun recyclerBuilder() {
         recyclerView = findViewById(R.id.recycleView)
         var mLayoutManager: LinearLayoutManager
@@ -55,6 +66,7 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
                 mLayoutManager.getOrientation())
         recyclerView!!.addItemDecoration(dividerItemDecoration)
         recyclerView!!.setLayoutManager(mLayoutManager)
+        recyclerView!!.addOnScrollListener(presenter.scrollListener)
         swipeRefreshLayout?.setOnRefreshListener(presenter.onRefreshListener)
     }
 
@@ -64,8 +76,9 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
         (application as MyApp).getActivityComponent()?.getSubComponent()?.inject(this)
         progressBar = findViewById(R.id.progress_bar)
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
-        val floatingPostBtn: FloatingActionButton = findViewById(R.id.floatingPostBtn)
-        floatingPostBtn.setOnClickListener { fbPublishPermission() }
+        floatingPostBtn = findViewById(R.id.floatingPostBtn)
+        floatingPostBtn?.setOnClickListener { fbPublishPermission() }
+        showFloatingUpdateBtn(false)
         recyclerBuilder()
     }
 
@@ -83,9 +96,22 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
 
     }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        presenter.onRestore(savedInstanceState.getParcelableArrayList(KEY_DATA),
+                savedInstanceState.getParcelable(KEY_PAGING))
+
+    }
+
+    public override fun onSaveInstanceState(savedInstanceState: Bundle?) {
+        super.onSaveInstanceState(savedInstanceState)
+        savedInstanceState!!.putParcelableArrayList(KEY_DATA, presenter.getData())
+        savedInstanceState!!.putParcelable(KEY_PAGING, presenter.getPaging())
+    }
+
     override fun fbLogin() {
-        if(AccessToken.getCurrentAccessToken()!=null){
-            if(AccessToken.getCurrentAccessToken().getPermissions().contains("user_posts")) {
+        if (AccessToken.getCurrentAccessToken() != null) {
+            if (AccessToken.getCurrentAccessToken().getPermissions().contains("user_posts")) {
                 presenter?.getInitFeed(AccessToken.getCurrentAccessToken().token)
                 return
             }
@@ -113,7 +139,7 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
     }
 
     fun fbPublishPermission() {
-        if(AccessToken.getCurrentAccessToken().getPermissions().contains("publish_actions")){
+        if (AccessToken.getCurrentAccessToken().getPermissions().contains("publish_actions")) {
             customDialogBox()
             return
         }
@@ -125,6 +151,13 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
     fun customDialogBox() {
         // custom dialog
         val dialog = Dialog(this)
+        val lp = WindowManager.LayoutParams()
+        lp.copyFrom(dialog.window.attributes)
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT
+        lp.gravity = Gravity.BOTTOM
+        lp.windowAnimations = R.style.DialogAnimation
+        dialog.window.attributes = lp
         dialog.setContentView(R.layout.dialog_box)
         val postText: EditText = dialog.findViewById(R.id.postEditText)
         val postButton: Button = dialog.findViewById(R.id.postButton)

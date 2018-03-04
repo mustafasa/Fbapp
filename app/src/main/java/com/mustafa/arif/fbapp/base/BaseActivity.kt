@@ -5,6 +5,11 @@ import android.support.annotation.StringRes
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import javax.inject.Inject
+import android.content.Intent
+import android.net.Uri
+import android.support.annotation.NonNull
+
+
 
 
 /**
@@ -40,6 +45,11 @@ abstract class BaseActivity<V : BasePresentableView, P : BasePresenter<V>> : App
     override fun onStop() {
         super.onStop()
         presenter.unbind()
+    }
+
+    override fun openBrowser(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(intent)
     }
 
 

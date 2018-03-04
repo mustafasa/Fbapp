@@ -26,15 +26,19 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>() {
 
         init {
             message = view.findViewById(R.id.message)
+            message.setOnClickListener(this)
             story = view.findViewById(R.id.story)
+            story.setOnClickListener(this)
             name = view.findViewById(R.id.name)
+            name.setOnClickListener(this)
             created_time = view.findViewById(R.id.created_time)
+            created_time.setOnClickListener(this)
             imageView = view.findViewById(R.id.imageView)
             imageView.setOnClickListener(this)
         }
 
         override fun onClick(view: View) {
-
+            recyclerViewListener?.onClick(view,getAdapterPosition())
         }
     }
 

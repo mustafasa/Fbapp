@@ -1,6 +1,7 @@
 package com.mustafa.arif.fbapp.base
 
 import android.support.annotation.NonNull
+import java.net.URL
 
 
 abstract class BasePresenter<V : BasePresentableView> {
@@ -21,6 +22,17 @@ abstract class BasePresenter<V : BasePresentableView> {
      */
     fun unbind() {
         view = null
+    }
+
+    /* Returns true if url is valid */
+    fun isValid(url: String): Boolean {
+        /* Try creating a valid URL */
+        try {
+            URL(url).toURI()
+            return true
+        } catch (e: Exception) {
+            return false
+        }
     }
 
 

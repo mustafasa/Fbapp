@@ -1,34 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:background="#ffffffff">
 
-    <EditText
-        android:id="@+id/postEditText"
-        android:layout_width="364dp"
-        android:layout_height="64dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="@string/fb_post_hint"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+<EditText
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:hint="@string/fb_post_hint"
+    android:id="@+id/postEditText"
+    android:layout_marginTop="20dp"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
+    android:layout_marginBottom="20dp"
+    android:textSize="18sp"
+    android:textColor="#ff000000"
+    android:layout_centerHorizontal="true"
+    android:gravity="center_horizontal" />
 
-    <Button
-        android:id="@+id/postButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="148dp"
-        android:layout_marginTop="44dp"
-        android:background="@color/colorPrimary"
-        android:text="@string/post_button"
-        android:textColor="@color/cardview_light_background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/postEditText" />
+<Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/post_button"
+    android:id="@+id/postButton"
+    android:gravity="center_vertical|center_horizontal"
+    android:layout_below="@+id/postEditText"
+    android:layout_marginBottom="20dp"
+    android:layout_centerHorizontal="true"
+    android:textColor="@color/colorPrimary" />
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>
