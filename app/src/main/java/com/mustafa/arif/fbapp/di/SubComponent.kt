@@ -6,5 +6,9 @@ import dagger.Subcomponent
 
 @Subcomponent
 interface SubComponent {
+    /**
+     * Provide mapping inject for HomeActivity
+     * @param activity provide HomeActivity
+     */
     fun inject(activity: HomeActivity)
 }

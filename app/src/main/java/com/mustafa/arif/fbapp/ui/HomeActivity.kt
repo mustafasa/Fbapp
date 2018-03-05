@@ -92,7 +92,8 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
 
     override fun onResume() {
         super.onResume()
-        presenter.updateRecycler(AccessToken.getCurrentAccessToken()?.token);
+        presenter.setToken(AccessToken.getCurrentAccessToken()?.token)
+        presenter.updateRecycler();
 
     }
 
@@ -112,7 +113,8 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
     override fun fbLogin() {
         if (AccessToken.getCurrentAccessToken() != null) {
             if (AccessToken.getCurrentAccessToken().getPermissions().contains("user_posts")) {
-                presenter?.getInitFeed(AccessToken.getCurrentAccessToken().token)
+                presenter?.setToken(AccessToken.getCurrentAccessToken().token)
+                presenter?.getInitFeed()
                 return
             }
         }
@@ -122,7 +124,8 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
         LoginManager.getInstance().registerCallback(callbackManager,
                 object : FacebookCallback<LoginResult> {
                     override fun onSuccess(loginResult: LoginResult) {
-                        presenter?.getInitFeed(loginResult.accessToken.token)
+                        presenter?.setToken(loginResult.accessToken.token)
+                        presenter?.getInitFeed()
                         Log.d("MainActivity", "Facebook token: " + loginResult.accessToken.token)
                     }
 
@@ -138,7 +141,7 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
                 })
     }
 
-    fun fbPublishPermission() {
+    override  fun fbPublishPermission() {
         if (AccessToken.getCurrentAccessToken().getPermissions().contains("publish_actions")) {
             customDialogBox()
             return
@@ -148,7 +151,7 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
                 Arrays.asList("publish_actions"));
     }
 
-    fun customDialogBox() {
+    override fun customDialogBox() {
         // custom dialog
         val dialog = Dialog(this)
         val lp = WindowManager.LayoutParams()
@@ -162,7 +165,8 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
         val postText: EditText = dialog.findViewById(R.id.postEditText)
         val postButton: Button = dialog.findViewById(R.id.postButton)
         postButton.setOnClickListener({ view ->
-            presenter.postToFb(postText.text.toString(), AccessToken.getCurrentAccessToken().token)
+            presenter.setToken(AccessToken.getCurrentAccessToken().token)
+            presenter.postToFb(postText.text.toString())
             dialog.dismiss()
         })
         dialog.show()

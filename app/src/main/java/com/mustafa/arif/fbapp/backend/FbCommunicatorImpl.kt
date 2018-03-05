@@ -3,10 +3,10 @@ package com.mustafa.arif.fbapp.backend
 import com.mustafa.arif.fbapp.backend.model.FbResponse
 import com.mustafa.arif.fbapp.backend.model.PostResponse
 import retrofit2.Call
+import java.util.*
 import javax.inject.Inject
 
 class FbCommunicatorImpl @Inject constructor() : FbCommunicator {
-
 
     @Inject
     protected lateinit var facebookRetrofit: FacebookRetrofit
@@ -22,6 +22,5 @@ class FbCommunicatorImpl @Inject constructor() : FbCommunicator {
     override fun addPost(access_token: String, message: String?): Call<PostResponse> {
         return facebookRetrofit.addPost(access_token,message)
     }
-
 
 }

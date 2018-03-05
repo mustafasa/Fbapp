@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FF1</string>
+    <string name="app_name">FbAPP</string>
     <string name="toast_message_user_cancel">You cancelled the login</string>
     <string name="toast_message_error">There was some error</string>
     <string name="toast_message_error_netwrok">Unstable network connection.Please try later</string>
@@ -9,6 +9,7 @@
     <string name="write_post_wall">Write a post on wall</string>
     <string name="post_successfully">Yaya!!! your post was sucessfuly posted</string>
     <string name="post_invalid">Post content was invalid, please retry</string>
+    <string name="like_post">You just like the post</string>
     <string name="facebook_app_id">1060837670654017</string>
     <string name="fb_login_protocol_scheme">fb1060837670654017</string>
 </resources>

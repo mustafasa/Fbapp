@@ -17,6 +17,7 @@ abstract class BasePresenter<V : BasePresentableView> {
     fun bind(@NonNull view: V) {
         this.view = view
     }
+
     /**
      * Unbinding of the Presenter from a View it was previously bound to.
      */
@@ -24,7 +25,12 @@ abstract class BasePresenter<V : BasePresentableView> {
         view = null
     }
 
-    /* Returns true if url is valid */
+    /**
+     * validate url
+     * @param url string url to open
+     *
+     * @return if valid true, else  false
+     **/
     fun isValid(url: String): Boolean {
         /* Try creating a valid URL */
         try {

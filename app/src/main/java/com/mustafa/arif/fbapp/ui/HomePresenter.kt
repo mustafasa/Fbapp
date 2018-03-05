@@ -16,17 +16,18 @@ import com.mustafa.arif.fbapp.base.BasePresenter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.ArrayList
 import javax.inject.Inject
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import java.util.*
 
 
 /**
  * Created by arifm2 on 3/2/2018.
  */
 class HomePresenter @Inject constructor(communicationChecker: CommunicationChecker,
-                                        fbCommunicator: FbCommunicator)
+                                        fbCommunicator: FbCommunicator,
+                                        recyclerAdapter: RecyclerAdapter)
     : BasePresenter<HomePresenter.View>() {
 
     private var recyclerAdapter: RecyclerAdapter
@@ -34,23 +35,23 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
     private var paging: Paging? = null
     private var communicationChecker: CommunicationChecker? = null
     private var fbCommunicator: FbCommunicator? = null
+    private var token: String? = null
 
 
     init {
         this.communicationChecker = communicationChecker
         this.fbCommunicator = fbCommunicator
-        recyclerAdapter = RecyclerAdapter()
+        this.recyclerAdapter = recyclerAdapter
     }
 
     private val recyclerViewListener = object : RecyclerViewListener {
-
 
         override fun onClick(v: android.view.View, position: Int) {
             if (v.id == R.id.imageView) {
                 val thumbnail = data?.get(position)?.getFullPicture()
                 if (thumbnail != null && !thumbnail.isEmpty() && isValid(thumbnail))
                     view?.openBrowser(thumbnail);
-            } else {
+            }  else {
                 val urlLink = data?.get(position)?.getPermalinkUrl()
                 if (urlLink != null && !urlLink.isEmpty() && isValid(urlLink))
                     view?.openBrowser(urlLink);
@@ -62,7 +63,6 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
             getOlderFeed()
         }
     }
-
 
     val scrollListener = object : OnScrollListener() {
 
@@ -79,32 +79,61 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
         view?.fbLogin()
     }
 
-    fun onRestore(data: ArrayList<Data>,paging: Paging){
-        this.data=data
-        this.paging=paging
+
+    fun setToken(token: String?) {
+        this.token = token
     }
 
-    fun getData(): ArrayList<Data>?{
+    /**
+     * This is called when restore of view.
+     * @param data
+     * @param paging
+     */
+    fun onRestore(data: ArrayList<Data>, paging: Paging) {
+        this.data = data
+        this.paging = paging
+    }
+
+    /**
+     * This method provide ArrayList<Data> existing in current
+     * @return data
+     */
+    fun getData(): ArrayList<Data>? {
         return this.data
     }
 
-    fun getPaging(): Paging?{
+    /**
+     * This method provide Paging existing in current
+     *
+     * @return paging
+     */
+    fun getPaging(): Paging? {
         return this.paging
     }
 
-    fun updateRecycler(token: String?) {
+    /**
+     * This method update the recyclerView
+     *
+     * @param token session string
+     */
+    fun updateRecycler() {
         if (token == null) {
             view?.fbLogin()
             return
-        }else if(data!=null){
+        } else if (data != null) {
             recyclerAdapter.addViewListener(recyclerViewListener)
             view?.setRecycleAdapter(recyclerAdapter, data)
             return
         }
-        getInitFeed(token)
+        getInitFeed()
     }
 
-    fun getInitFeed(token: String?) {
+    /**
+     * This method get latest/initial top post from FB
+     *
+     * @param token session string
+     */
+    fun getInitFeed() {
         view?.showProgressBar(true)
         if (token == null) {
             view?.fbLogin()
@@ -129,12 +158,14 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
                 }
             })
         } else {
-            view?.showProgressBar(false)
-            view?.toastMessage(R.string.toast_message_error_netwrok)
+            noNetworkErroHandler()
 
         }
     }
 
+    /**
+     * This method get next/older feeds from FB
+     */
     fun getOlderFeed() {
         view?.showProgressBar(true)
         if (communicationChecker!!.isNetworkAvailable!!) {
@@ -157,7 +188,13 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
         }
     }
 
-    fun postToFb(message: String?, token: String?) {
+    /**
+     * This method post on wall
+     *
+     * @param message text to be posted
+     * @param token session string
+     */
+    fun postToFb(message: String?) {
         view?.showProgressBar(true)
         if (token == null) {
             view?.fbLogin()
@@ -168,11 +205,11 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
             return
         }
         if (communicationChecker!!.isNetworkAvailable!!) {
-            fbCommunicator?.addPost(token, message)?.enqueue(object : Callback<PostResponse> {
+            fbCommunicator?.addPost(token!!, message)?.enqueue(object : Callback<PostResponse> {
                 override fun onResponse(call: Call<PostResponse>, response: retrofit2.Response<PostResponse>?) {
                     if (response?.body()?.getId() != null) {
                         view?.toastMessage(R.string.post_successfully)
-                        getInitFeed(token)
+                        getInitFeed()
                     } else {
                         noNetworkErroHandler()
                     }
@@ -228,7 +265,6 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
          */
         fun updateRecyclerAdapter(recycleAdapter: RecyclerAdapter, data: ArrayList<Data>?)
 
-
         /**
          * Control showing/hidden of progress bar
          *
@@ -236,8 +272,27 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
          */
         fun showProgressBar(show: Boolean)
 
+        /**
+         * Login to facebook to get session token for future communication with fb Api.
+         * This method can open sdk activity for login in
+         */
         fun fbLogin()
 
+        /**
+         * Request for publish post on facebook wall. This is special request to be taken seprately.
+         *
+         */
+        fun fbPublishPermission()
+
+        /**
+         * A customize dialog box, where user can enter the post message and post the information
+         * on users wall
+         */
+        fun customDialogBox()
+
+        /**
+         * A floating button, on top of recyclerView
+         */
         fun showFloatingUpdateBtn(boolean: Boolean)
     }
 }

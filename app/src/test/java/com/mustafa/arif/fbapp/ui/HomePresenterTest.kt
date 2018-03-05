@@ -3,6 +3,7 @@ package com.mustafa.arif.fbapp.ui
 import com.mustafa.arif.fbapp.R
 import com.mustafa.arif.fbapp.backend.CommunicationChecker
 import com.mustafa.arif.fbapp.backend.FbCommunicator
+import com.mustafa.arif.fbapp.recycler.RecyclerAdapter
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,13 +23,15 @@ class HomePresenterTest {
     lateinit var communicationCheckerMock: CommunicationChecker
     @Mock
     lateinit var fbCommunicatorMock: FbCommunicator
+    @Mock
+    lateinit var recyclerAdapterMock: RecyclerAdapter
 
     private var homepresenter: HomePresenter? = null
 
     @Before
     fun setup() {
         `when`(communicationCheckerMock.isNetworkAvailable).thenReturn(true)
-        homepresenter=HomePresenter(communicationCheckerMock,fbCommunicatorMock)
+        homepresenter=HomePresenter(communicationCheckerMock,fbCommunicatorMock,recyclerAdapterMock)
         homepresenter!!.bind(viewMock)
     }
 

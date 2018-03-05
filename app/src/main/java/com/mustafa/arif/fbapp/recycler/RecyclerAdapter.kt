@@ -10,14 +10,17 @@ import android.view.ViewGroup
 import com.mustafa.arif.fbapp.backend.model.Data
 import com.squareup.picasso.Picasso
 import java.util.ArrayList
+import javax.inject.Inject
 
 
-class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>() {
+class RecyclerAdapter @Inject constructor(): RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>() {
 
     private var fbFeeds: ArrayList<Data>? = null
     private var recyclerViewListener: RecyclerViewListener? = null
 
     inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
+
+
         var message: TextView
         var story: TextView
         var name: TextView
@@ -40,6 +43,7 @@ class RecyclerAdapter : RecyclerView.Adapter<RecyclerAdapter.MyViewHolder>() {
         override fun onClick(view: View) {
             recyclerViewListener?.onClick(view,getAdapterPosition())
         }
+
     }
 
     override fun onBindViewHolder(holder: MyViewHolder?, position: Int) {

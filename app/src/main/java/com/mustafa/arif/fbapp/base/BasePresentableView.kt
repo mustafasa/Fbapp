@@ -6,6 +6,10 @@ import android.support.annotation.StringRes
 
 
 interface BasePresentableView  {
+    /**
+     * show standard toast message
+     * @param StringId to show on toast
+     */
      fun toastMessage(@StringRes message: Int)
      /**
       * Open a default browser app with provided uri.

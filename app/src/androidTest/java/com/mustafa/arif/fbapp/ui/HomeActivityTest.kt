@@ -75,13 +75,26 @@ class HomeActivityTest {
     }
 
     @Test
-    fun test_Recycler() {
+    fun test_recycler() {
         val data: ArrayList<Data> = ArrayList<Data>()
         var recyclerAdapter = RecyclerAdapter()
         val tempData = Data()
         tempData.setMessage("-1")
         data!!.add(tempData)
         uiThreadTestRule.runOnUiThread { homeActivity?.setRecycleAdapter(recyclerAdapter,data) }
+        onView(withId(R.id.recycleView))
+                .check(matches(isDisplayed()))
+
+    }
+
+    @Test
+    fun test_recycler_updateRecyclerAdapter() {
+        val data: ArrayList<Data> = ArrayList<Data>()
+        var recyclerAdapter = RecyclerAdapter()
+        val tempData = Data()
+        tempData.setMessage("-1")
+        data!!.add(tempData)
+        uiThreadTestRule.runOnUiThread { homeActivity?.updateRecyclerAdapter(recyclerAdapter,data) }
         onView(withId(R.id.recycleView))
                 .check(matches(isDisplayed()))
 
