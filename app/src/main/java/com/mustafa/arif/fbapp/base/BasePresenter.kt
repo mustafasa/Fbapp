@@ -36,7 +36,7 @@ abstract class BasePresenter<V : BasePresentableView> {
         try {
             URL(url).toURI()
             return true
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             return false
         }
     }

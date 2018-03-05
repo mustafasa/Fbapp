@@ -66,7 +66,8 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             when (newState) {
-                RecyclerView.SCROLL_STATE_IDLE -> view?.showFloatingUpdateBtn(true)
+                RecyclerView.SCROLL_STATE_IDLE -> if (communicationChecker.isNetworkAvailable)
+                    view?.showFloatingUpdateBtn(true)
                 RecyclerView.SCROLL_STATE_DRAGGING -> view?.showFloatingUpdateBtn(false)
             }
 
@@ -134,7 +135,7 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
             return
         }
         recyclerAdapter.addViewListener(recyclerViewListener)
-        if (communicationChecker!!.isNetworkAvailable!!) {
+        if (communicationChecker!!.isNetworkAvailable) {
             fbCommunicator?.getFeed(10, token, "picture,created_time,story" +
                     ",message,name,full_picture,permalink_url")?.enqueue(object : Callback<FbResponse> {
                 override fun onResponse(call: Call<FbResponse>, response: retrofit2.Response<FbResponse>?) {
@@ -152,6 +153,7 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
                 }
             })
         } else {
+            initErrorHandler()
             noNetworkErroHandler()
 
         }
@@ -162,7 +164,7 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
      */
     fun getOlderFeed() {
         view?.showProgressBar(true)
-        if (communicationChecker!!.isNetworkAvailable!!) {
+        if (communicationChecker!!.isNetworkAvailable) {
             fbCommunicator?.getOlderFeed(paging?.getNext())?.enqueue(object : Callback<FbResponse> {
                 override fun onResponse(call: Call<FbResponse>, response: retrofit2.Response<FbResponse>?) {
                     if (response != null && response.body()?.data != null) {
@@ -197,7 +199,7 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
             view?.toastMessage(R.string.post_invalid)
             return
         }
-        if (communicationChecker!!.isNetworkAvailable!!) {
+        if (communicationChecker!!.isNetworkAvailable) {
             fbCommunicator?.addPost(token!!, message)?.enqueue(object : Callback<PostResponse> {
                 override fun onResponse(call: Call<PostResponse>, response: retrofit2.Response<PostResponse>?) {
                     if (response?.body()?.getId() != null) {
@@ -229,8 +231,8 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
             val tempData = Data()
             tempData.setMessage("-1")
             data!!.add(tempData)
-            view?.setRecycleAdapter(recyclerAdapter, data)
         }
+            view?.setRecycleAdapter(recyclerAdapter, data)
 
     }
 
