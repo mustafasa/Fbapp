@@ -99,15 +99,20 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        presenter.onRestore(savedInstanceState.getParcelableArrayList(KEY_DATA),
-                savedInstanceState.getParcelable(KEY_PAGING))
+        if (savedInstanceState.containsKey(KEY_DATA) && savedInstanceState.containsKey(KEY_PAGING)) {
+            presenter.onRestore(savedInstanceState.getParcelableArrayList(KEY_DATA),
+                    savedInstanceState.getParcelable(KEY_PAGING))
+        }
 
     }
 
     public override fun onSaveInstanceState(savedInstanceState: Bundle?) {
         super.onSaveInstanceState(savedInstanceState)
-        savedInstanceState?.putParcelableArrayList(KEY_DATA, presenter.getData())
-        savedInstanceState?.putParcelable(KEY_PAGING, presenter.getPaging())
+        if (presenter.getData() != null && presenter.getPaging() != null) {
+            savedInstanceState?.putParcelableArrayList(KEY_DATA, presenter.getData())
+            savedInstanceState?.putParcelable(KEY_PAGING, presenter.getPaging())
+        }
+
     }
 
     override fun fbLogin() {
@@ -141,7 +146,7 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
                 })
     }
 
-    override  fun fbPublishPermission() {
+    override fun fbPublishPermission() {
         if (AccessToken.getCurrentAccessToken().getPermissions().contains("publish_actions")) {
             customDialogBox()
             return

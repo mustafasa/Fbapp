@@ -66,7 +66,8 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             when (newState) {
-                RecyclerView.SCROLL_STATE_IDLE -> if (communicationChecker.isNetworkAvailable)
+                RecyclerView.SCROLL_STATE_IDLE -> if (communicationChecker.isNetworkAvailable
+                        && data?.size!!=1)
                     view?.showFloatingUpdateBtn(true)
                 RecyclerView.SCROLL_STATE_DRAGGING -> view?.showFloatingUpdateBtn(false)
             }
@@ -141,6 +142,11 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
                 override fun onResponse(call: Call<FbResponse>, response: retrofit2.Response<FbResponse>?) {
                     if (response != null && response.body()?.data != null) {
                         data = response.body()?.data
+                        if(data?.size!!<=0){
+                            initErrorHandler()
+                            noNetworkErroHandler()
+                            return
+                        }
                         paging = response.body()?.paging
                         view?.setRecycleAdapter(recyclerAdapter, data)
                         view?.showProgressBar(false)
@@ -169,6 +175,11 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
                 override fun onResponse(call: Call<FbResponse>, response: retrofit2.Response<FbResponse>?) {
                     if (response != null && response.body()?.data != null) {
                         data?.addAll(response.body()?.data!!)
+                        if(data?.size!!<=0){
+                            initErrorHandler()
+                            noNetworkErroHandler()
+                            return
+                        }
                         paging = response.body()?.paging
                         view?.updateRecyclerAdapter(recyclerAdapter, data)
                         view?.showProgressBar(false)
@@ -226,7 +237,7 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
 
     private fun initErrorHandler() {
         view?.showProgressBar(false)
-        if (data == null) run {
+        if (data == null || data?.size!!<=0) run {
             data = ArrayList()
             val tempData = Data()
             tempData.setMessage("-1")
