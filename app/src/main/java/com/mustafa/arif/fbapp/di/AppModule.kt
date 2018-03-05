@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 @Module
 class AppModule(context: Context) {
 
-    val BASE_URL = "https://graph.facebook.com/v2.12/"
+    private val BASE_URL = "https://graph.facebook.com/v2.12/"
 
     private var context: Context
 
@@ -40,7 +40,7 @@ class AppModule(context: Context) {
 
     @Provides
     fun getFacebookRetrofit(retrofit: Retrofit): FacebookRetrofit {
-        return retrofit.create<FacebookRetrofit>(FacebookRetrofit::class.java!!)
+        return retrofit.create<FacebookRetrofit>(FacebookRetrofit::class.java)
     }
 
     @Provides

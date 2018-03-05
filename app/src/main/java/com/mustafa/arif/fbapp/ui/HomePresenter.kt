@@ -15,10 +15,8 @@ import com.mustafa.arif.fbapp.base.BasePresentableView
 import com.mustafa.arif.fbapp.base.BasePresenter
 import retrofit2.Call
 import retrofit2.Callback
-import retrofit2.Response
 import javax.inject.Inject
 import android.support.v7.widget.RecyclerView
-import android.view.View
 import java.util.*
 
 
@@ -50,11 +48,11 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
             if (v.id == R.id.imageView) {
                 val thumbnail = data?.get(position)?.getFullPicture()
                 if (thumbnail != null && !thumbnail.isEmpty() && isValid(thumbnail))
-                    view?.openBrowser(thumbnail);
+                    view?.openBrowser(thumbnail)
             }  else {
                 val urlLink = data?.get(position)?.getPermalinkUrl()
                 if (urlLink != null && !urlLink.isEmpty() && isValid(urlLink))
-                    view?.openBrowser(urlLink);
+                    view?.openBrowser(urlLink)
             }
         }
 
@@ -113,8 +111,6 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
 
     /**
      * This method update the recyclerView
-     *
-     * @param token session string
      */
     fun updateRecycler() {
         if (token == null) {
@@ -130,8 +126,6 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
 
     /**
      * This method get latest/initial top post from FB
-     *
-     * @param token session string
      */
     fun getInitFeed() {
         view?.showProgressBar(true)
@@ -192,7 +186,6 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
      * This method post on wall
      *
      * @param message text to be posted
-     * @param token session string
      */
     fun postToFb(message: String?) {
         view?.showProgressBar(true)
@@ -226,13 +219,13 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
 
     private fun noNetworkErroHandler() {
         view?.showProgressBar(false)
-        view?.toastMessage(R.string.toast_message_error_netwrok)
+        view?.toastMessage(R.string.toast_message_error_network)
     }
 
     private fun initErrorHandler() {
         view?.showProgressBar(false)
         if (data == null) run {
-            data = ArrayList<Data>()
+            data = ArrayList()
             val tempData = Data()
             tempData.setMessage("-1")
             data!!.add(tempData)
@@ -252,8 +245,8 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
         /**
          * This method is for initial setup and  attach recyclerAdapter and data array
          *
-         * @param recycleAdapter adapter to attach
-         * @param Data       data arraylist to attach recycler adapter.
+         * @param recyclerAdapter adapter to attach
+         * @param data       data arrayList to attach recycler adapter.
          */
         fun setRecycleAdapter(recyclerAdapter: RecyclerAdapter, data: ArrayList<Data>?)
 
@@ -261,7 +254,7 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
          * This method is utilized to update recyclerView adapter and data array.
          *
          * @param recycleAdapter adapter to update recyclerView
-         * @param Data       arraylist to update  recyclerView
+         * @param data       arraylist to update  recyclerView
          */
         fun updateRecyclerAdapter(recycleAdapter: RecyclerAdapter, data: ArrayList<Data>?)
 

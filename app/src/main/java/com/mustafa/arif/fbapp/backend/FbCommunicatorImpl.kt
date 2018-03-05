@@ -3,7 +3,6 @@ package com.mustafa.arif.fbapp.backend
 import com.mustafa.arif.fbapp.backend.model.FbResponse
 import com.mustafa.arif.fbapp.backend.model.PostResponse
 import retrofit2.Call
-import java.util.*
 import javax.inject.Inject
 
 class FbCommunicatorImpl @Inject constructor() : FbCommunicator {

@@ -4,7 +4,6 @@ import com.mustafa.arif.fbapp.backend.model.FbResponse
 import com.mustafa.arif.fbapp.backend.model.PostResponse
 import retrofit2.Call
 import retrofit2.http.*
-import java.util.*
 
 /**
  * Retrofit interface, which communicate with facebook web api/Sdk
@@ -23,7 +22,7 @@ interface FacebookRetrofit {
     fun getFbFeed(
             @Query("limit") limit: Int,
             @Query("access_token") access_token: String?,
-            @Query("fields") picture: String?
+            @Query("fields") fields: String?
     )
             : Call<FbResponse>
 

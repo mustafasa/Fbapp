@@ -13,8 +13,6 @@ import org.mockito.Mockito.*
 import org.mockito.junit.MockitoJUnitRunner
 
 
-
-
 @RunWith(MockitoJUnitRunner.Silent::class)
 class HomePresenterTest {
     @Mock
@@ -26,98 +24,100 @@ class HomePresenterTest {
     @Mock
     lateinit var recyclerAdapterMock: RecyclerAdapter
 
-    private var homepresenter: HomePresenter? = null
+    private var homePresenter: HomePresenter? = null
+
+    private var toke: String? = null
 
     @Before
     fun setup() {
         `when`(communicationCheckerMock.isNetworkAvailable).thenReturn(true)
-        homepresenter=HomePresenter(communicationCheckerMock,fbCommunicatorMock,recyclerAdapterMock)
-        homepresenter!!.bind(viewMock)
+        homePresenter = HomePresenter(communicationCheckerMock, fbCommunicatorMock, recyclerAdapterMock)
+        homePresenter!!.bind(viewMock)
     }
 
 
     @Test
     fun test_emptyToken_updateRecycler() {
-        var toke:String?=null
-        homepresenter!!.updateRecycler(toke)
+        homePresenter!!.updateRecycler(toke)
         verify(viewMock).fbLogin()
     }
 
     @Test
     fun test_validToken_updateRecycler() {
-        var toke ="token"
-        homepresenter!!.updateRecycler(toke)
+        toke = "token"
+        homePresenter!!.updateRecycler(toke)
         verify(viewMock, never()).fbLogin()
     }
 
     @Test
-    fun test_emptyToken_getInitFeed(){
-        var toke:String?=null
-        homepresenter!!.getInitFeed(toke)
+    fun test_emptyToken_getInitFeed() {
+        homePresenter!!.getInitFeed(toke)
         verify(viewMock).showProgressBar(true)
         verify(viewMock).fbLogin()
         verify(communicationCheckerMock, never()).isNetworkAvailable
     }
 
     @Test
-    fun test_validToken_getInitFeed(){
-        var toke:String?="token"
-        homepresenter!!.getInitFeed(toke)
+    fun test_validToken_getInitFeed() {
+        homePresenter!!.getInitFeed(toke)
         verify(viewMock).showProgressBar(true)
         verify(viewMock, never()).fbLogin()
         verify(communicationCheckerMock).isNetworkAvailable
     }
 
     @Test
-    fun test_validToken_getInitFeed_notAvailableNetwork(){
+    fun test_validToken_getInitFeed_notAvailableNetwork() {
         `when`(communicationCheckerMock.isNetworkAvailable).thenReturn(false)
-        var toke:String?="token"
-        homepresenter!!.getInitFeed(toke)
+        toke = "token"
+        homePresenter!!.getInitFeed(toke)
         verify(viewMock).showProgressBar(true)
         verify(viewMock, never()).fbLogin()
         verify(communicationCheckerMock).isNetworkAvailable
         verify(fbCommunicatorMock, never()).getFeed(ArgumentMatchers.anyInt(), ArgumentMatchers.anyString(),
                 ArgumentMatchers.anyString())
         verify(viewMock).showProgressBar(false)
-        verify(viewMock).toastMessage(R.string.toast_message_error_netwrok)
+        verify(viewMock).toastMessage(R.string.toast_message_error_network)
 
     }
 
     @Test
-    fun test_validToken_getInitFeed_availableNetwork(){
-        var toke:String?="token"
-        homepresenter!!.getInitFeed(toke)
+    fun test_validToken_getInitFeed_availableNetwork() {
+        toke = "token"
+        homePresenter!!.getInitFeed(toke)
         verify(viewMock).showProgressBar(true)
         verify(viewMock, never()).fbLogin()
         verify(communicationCheckerMock).isNetworkAvailable
         verify(fbCommunicatorMock).getFeed(10, toke,
                 "picture,created_time,story,message,name")
         verify(viewMock, never()).showProgressBar(false)
-        verify(viewMock, never()).toastMessage(R.string.toast_message_error_netwrok)
+        verify(viewMock, never()).toastMessage(R.string.toast_message_error_network)
 
     }
+
     @Test
-    fun test_getOlderFeed(){
-        homepresenter!!.getOlderFeed()
+    fun test_getOlderFeed() {
+        homePresenter!!.getOlderFeed()
         verify(viewMock).showProgressBar(true)
         verify(communicationCheckerMock).isNetworkAvailable
 
     }
+
     @Test
-    fun test_getOlderFeed_notAvailableNetwork(){
+    fun test_getOlderFeed_notAvailableNetwork() {
         `when`(communicationCheckerMock.isNetworkAvailable).thenReturn(false)
-        homepresenter!!.getOlderFeed()
+        homePresenter!!.getOlderFeed()
         verify(viewMock).showProgressBar(true)
         verify(communicationCheckerMock).isNetworkAvailable
         verify(viewMock).showProgressBar(false)
-        verify(viewMock).toastMessage(R.string.toast_message_error_netwrok)
+        verify(viewMock).toastMessage(R.string.toast_message_error_network)
 
     }
+
     @Test
-    fun test_postToFb_nullMessage(){
-        var token:String?="token"
-        var message:String?=null
-        homepresenter!!.postToFb(message,token)
+    fun test_postToFb_nullMessage() {
+        toke = "token"
+        var message: String? = null
+        homePresenter!!.postToFb(message, toke)
         verify(viewMock).showProgressBar(true)
         verify(viewMock, never()).fbLogin()
         verify(viewMock).showProgressBar(false)
@@ -125,47 +125,45 @@ class HomePresenterTest {
     }
 
     @Test
-    fun test_postToFb_nullToken(){
-        var token:String?=null
-        var message:String?="message"
-        homepresenter!!.postToFb(message,token)
+    fun test_postToFb_nullToken() {
+        var message: String? = "message"
+        homePresenter!!.postToFb(message, toke)
         verify(viewMock).showProgressBar(true)
         verify(viewMock).fbLogin()
-        verify(viewMock,never()).toastMessage(R.string.post_invalid)
+        verify(viewMock, never()).toastMessage(R.string.post_invalid)
     }
 
     @Test
-    fun test_postToFb_nullToken_test_nullMessage(){
-        var token:String?=null
-        var message:String?=null
-        homepresenter!!.postToFb(message,token)
+    fun test_postToFb_nullToken_test_nullMessage() {
+        var message: String? = null
+        homePresenter!!.postToFb(message, toke)
         verify(viewMock).showProgressBar(true)
         verify(viewMock).fbLogin()
-        verify(viewMock,never()).toastMessage(R.string.post_invalid)
+        verify(viewMock, never()).toastMessage(R.string.post_invalid)
     }
 
     @Test
-    fun test_postToFb_validMessageAndToken(){
-        var token:String?="token"
-        var message:String?="message"
-        homepresenter!!.postToFb(message,token)
+    fun test_postToFb_validMessageAndToken() {
+        var message: String? = "message"
+        toke = "message"
+        homePresenter!!.postToFb(message, token)
         verify(viewMock).showProgressBar(true)
         verify(viewMock, never()).fbLogin()
-        verify(viewMock,never()).toastMessage(R.string.post_invalid)
+        verify(viewMock, never()).toastMessage(R.string.post_invalid)
         verify(communicationCheckerMock).isNetworkAvailable
     }
+
     @Test
-    fun test_postToFb_validMessageAndToken_notAvailableNetwork(){
+    fun test_postToFb_validMessageAndToken_notAvailableNetwork() {
         `when`(communicationCheckerMock.isNetworkAvailable).thenReturn(false)
-        var token:String?="token"
-        var message:String?="message"
-        homepresenter!!.postToFb(message,token)
+        var message: String? = "message"
+        homePresenter!!.postToFb(message, toke)
         verify(viewMock).showProgressBar(true)
         verify(viewMock, never()).fbLogin()
-        verify(viewMock,never()).toastMessage(R.string.post_invalid)
+        verify(viewMock, never()).toastMessage(R.string.post_invalid)
         verify(communicationCheckerMock).isNetworkAvailable
         verify(viewMock).showProgressBar(false)
-        verify(viewMock).toastMessage(R.string.toast_message_error_netwrok)
+        verify(viewMock).toastMessage(R.string.toast_message_error_network)
     }
 
 

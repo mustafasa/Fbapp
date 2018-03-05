@@ -89,11 +89,11 @@ class Data() : Parcelable {
         this.story = story
     }
 
-    fun getCreated_time(): String? {
+    fun getCreatedTime(): String? {
         return created_time
     }
 
-    fun setCreated_time(created_time: String) {
+    fun setCreatedTime(created_time: String) {
         this.created_time = created_time
     }
 

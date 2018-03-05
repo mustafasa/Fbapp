@@ -39,7 +39,7 @@ class HomeActivityTest {
     @Test
     fun test_ConfigureEulaTextView() {
         onView(withId(R.id.recycleView))
-                .check(matches(isDisplayed()));
+                .check(matches(isDisplayed()))
 
     }
 
@@ -76,7 +76,7 @@ class HomeActivityTest {
 
     @Test
     fun test_recycler() {
-        val data: ArrayList<Data> = ArrayList<Data>()
+        val data: ArrayList<Data> = ArrayList()
         var recyclerAdapter = RecyclerAdapter()
         val tempData = Data()
         tempData.setMessage("-1")
@@ -89,7 +89,7 @@ class HomeActivityTest {
 
     @Test
     fun test_recycler_updateRecyclerAdapter() {
-        val data: ArrayList<Data> = ArrayList<Data>()
+        val data: ArrayList<Data> = ArrayList()
         var recyclerAdapter = RecyclerAdapter()
         val tempData = Data()
         tempData.setMessage("-1")

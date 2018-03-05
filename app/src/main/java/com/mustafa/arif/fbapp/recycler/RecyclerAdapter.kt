@@ -49,7 +49,7 @@ class RecyclerAdapter @Inject constructor(): RecyclerView.Adapter<RecyclerAdapte
     override fun onBindViewHolder(holder: MyViewHolder?, position: Int) {
         if (fbFeeds?.get(position)?.getMessage()=="-1") {
             holder?.imageView?.visibility = View.INVISIBLE
-            holder?.story?.setText("Pull to refresh")
+            holder?.story?.setText( holder?.story?.resources.getText(R.string.pull_to_refresh))
             holder?.story?.setTextSize(25.0f)
             holder?.story?.setTextColor(holder.story.getResources().getColor(R.color.colorPrimaryDark))
             return
@@ -62,7 +62,7 @@ class RecyclerAdapter @Inject constructor(): RecyclerView.Adapter<RecyclerAdapte
         holder?.message?.setText(fbFeeds?.get(position)?.getMessage())
         holder?.story?.setText(fbFeeds?.get(position)?.getStory())
         holder?.name?.setText(fbFeeds?.get(position)?.getName())
-        holder?.created_time?.setText(fbFeeds?.get(position)?.getCreated_time())
+        holder?.created_time?.setText(fbFeeds?.get(position)?.getCreatedTime())
         val thumbnail = fbFeeds?.get(position)?.getPicture()
         Picasso.with(holder?.imageView?.context)
                 .load(thumbnail)
@@ -83,9 +83,9 @@ class RecyclerAdapter @Inject constructor(): RecyclerView.Adapter<RecyclerAdapte
     }
 
     /**
-     * Add arraylist to recycle adapter.
+     * Add arrayList to recycle adapter.
      *
-     * @param children ArrayList to attach
+     * @param fbFeeds ArrayList to attach
      */
     fun addFbFeeds(fbFeeds: ArrayList<Data>?) {
         this.fbFeeds = fbFeeds

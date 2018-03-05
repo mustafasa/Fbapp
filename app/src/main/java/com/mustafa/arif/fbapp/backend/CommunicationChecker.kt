@@ -1,7 +1,7 @@
 package com.mustafa.arif.fbapp.backend
 
 /**
- * Class to check all sort of commuication
+ * Class to check all sort of communication
  */
 interface CommunicationChecker {
 

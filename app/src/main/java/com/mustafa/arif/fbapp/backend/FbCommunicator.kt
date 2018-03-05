@@ -4,7 +4,6 @@ import com.mustafa.arif.fbapp.backend.model.FbResponse
 import com.mustafa.arif.fbapp.backend.model.PostResponse
 import org.jetbrains.annotations.NotNull
 import retrofit2.Call
-import java.util.*
 
 /**
  * Class to establish network request to fb API

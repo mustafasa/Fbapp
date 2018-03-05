@@ -72,7 +72,7 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
 
 
     override fun configureViewElements(savedInstanceState: Bundle?) {
-        setContentView(R.layout.main_view);
+        setContentView(R.layout.main_view)
         (application as MyApp).getActivityComponent()?.getSubComponent()?.inject(this)
         progressBar = findViewById(R.id.progress_bar)
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
@@ -93,7 +93,7 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
     override fun onResume() {
         super.onResume()
         presenter.setToken(AccessToken.getCurrentAccessToken()?.token)
-        presenter.updateRecycler();
+        presenter.updateRecycler()
 
     }
 
@@ -106,8 +106,8 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
 
     public override fun onSaveInstanceState(savedInstanceState: Bundle?) {
         super.onSaveInstanceState(savedInstanceState)
-        savedInstanceState!!.putParcelableArrayList(KEY_DATA, presenter.getData())
-        savedInstanceState!!.putParcelable(KEY_PAGING, presenter.getPaging())
+        savedInstanceState?.putParcelableArrayList(KEY_DATA, presenter.getData())
+        savedInstanceState?.putParcelable(KEY_PAGING, presenter.getPaging())
     }
 
     override fun fbLogin() {
@@ -148,7 +148,7 @@ class HomeActivity : BaseActivity<HomePresenter.View, HomePresenter>(), HomePres
         }
         LoginManager.getInstance().logInWithPublishPermissions(
                 this,
-                Arrays.asList("publish_actions"));
+                Arrays.asList("publish_actions"))
     }
 
     override fun customDialogBox() {
