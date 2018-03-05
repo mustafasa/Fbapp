@@ -66,8 +66,7 @@ class HomePresenter @Inject constructor(communicationChecker: CommunicationCheck
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             when (newState) {
-                RecyclerView.SCROLL_STATE_IDLE -> if (communicationChecker.isNetworkAvailable
-                        && data?.size!!=1)
+                RecyclerView.SCROLL_STATE_IDLE -> if (communicationChecker.isNetworkAvailable)
                     view?.showFloatingUpdateBtn(true)
                 RecyclerView.SCROLL_STATE_DRAGGING -> view?.showFloatingUpdateBtn(false)
             }
